@@ -1,0 +1,109 @@
+一
+1.  create table student(sid int primary key auto_increment,sname varchar(20)
+	 not null,birthday date,sex char(1)) auto_increment=1001;
+
+2.load data infile 'e:\\student.txt' into table student;
+
+3. create table teacher(tid int primary key auto_increment,tname varchar(20) not null);
+
+4.insert into teacher(tname) values('叶平'),('王老师'),('张老师'),('李老师'),('孙老师');
+
+5.create table course(cid int primary key auto_increment,cname varchar(20),tid int null);
+
+6. load data infile 'e:\\course.txt' into table course fields terminated by ',';
+
+
+7.create table sc(sid int not null,cid int not null,score int not null);
+
+8.load data infile 'e:\\score.txt' into table sc fields terminated by ',';
+
+二
+学生表和老师表
+1.select count(*),tname from teacher where tname like '李%';
+
+2.select count(*),sex from student group by sex;
+
+3.select count(*),sname from student group by sname ;
+
+4.select sname,year(bithday) from student where year(bithday)=1981;
+
+5.select sid,avg(score) from sc group by sid having avg(score)>60;
+
+6.select count(*),sid from sc group by sid;
+
+7.select count(*),sid from sc group by sid having  count(*)>=2;
+
+8.select cid,max(score),min(score) from sc group by cid;
+
+9.select cid,count(*) from sc group by cid order by count(*) desc,cid;
+
+部门员工表
+1.select * from emp where (2018-year(hiredate))>=38;
+
+2.select * from emp where month(hiredate)=12;
+
+3.select * from emp where month(date_add(hiredate,interval 1 month))=2;
+
+4.select * from emp where year(hiredate)=1980 and month(hiredate)>6;
+
+5.select ename,empno from emp where char_length(ename)=4;
+	select ename,empno from emp where length(ename)=4;
+6.select min(sal),job from emp group by job;
+
+7.select count(*),month(hiredate),hiredate from emp group by month(hiredate);
+
+8.select max(sal),deptno from emp group by deptno;
+
+9.select min(sal),deptno,job from emp group by deptno,job;
+
+10.select sum(sal),deptno from emp group by deptno;
+
+11.select avg(sal),deptno from emp where deptno=10 or deptno=20 group by deptno;
+	select avg(sal),deptno from emp group by deptno having deptno=10 or deptno=20;
+
+12.select avg(sal),deptno from emp group by deptno having avg(sal)>2000;
+
+13. select count(*),job from emp group by job having job='manager';
+
+	select count(*),job from emp where job='manager' group by job;
+14.select * from emp order by sal desc limit 3;
+
+15.select * from emp order by sal desc limit 6,4;
+三
+1.select c.cid,cname,tname,c.tid,score from sc left outer join
+	 (course c inner join teacher  t on c.tid=t.tid) on sc.cid=c.cid where sid=1001;
+
+2.select sc.cid,score,sc.sid,c.cname,s.sname from course c left outer join 
+	( sc inner join student s on s.sid=sc.sid) on c.cid=sc.cid where s.sname='王五 ';
+
+3.select s.sid,sname,count(*),sum(score) from sc inner join 
+	student s on  s.sid=sc.sid group by s.sid;
+
+4.查询所有课程成绩都小于等于60分的同学的学号、姓名；(未完成)
+select ss.sid,ss.sname,count(*) from student ss inner join (sc inner join 
+	student s on sc.sid=s.sid) on sc.sid =ss.sid  where score<60 group by ss.sid;
+
+5.select s.sid,sname,count(*) from student s inner 
+	join sc on s.sid=sc.sid group by sc.sid having count(*)<7;
+
+6.select cname,count(*) from course c inner join sc on sc.cid=c.cid group by sc.cid;
+
+7.select sname,s.sid,count(*)  from student s inner join
+
+8.select avg(score),sc.cid from course c inner join 
+	sc on sc.cid=c.cid group by sc.cid order by avg(score) asc,cid desc;
+
+9.select avg(score),s.sid,sname from student s inner join
+	 sc on s.sid=sc.sid group by sc.sid having avg(score)>80;
+
+10.查询课程相同且成绩相同的的学生的学号、课程号、学生成绩 (未完成)
+select sc.cid,score,sc.sid,count(*) from sc inner join 
+	course c on c.cid=sc.cid group by sc.cid,score  having count(*)>=2;
+
+11.select sc.sid,c.cid,cname from course c inner join sc on c.cid=sc.cid group by sc.cid,sid;
+
+12.select count(*),sc.sid,avg(score) from  course c inner join
+  	sc on c.cid=sc.cid where score<60 group by sc.sid having count(*)>2 ;
+四
+5.select ss.sid,ss.sname,count(*),avg(score) from student ss inner join
+ 	(sc inner join student s on sc.sid=s.sid) on sc.sid =ss.sid  where score<60 group by ss.sid having count(*)>2;
