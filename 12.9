@@ -29,8 +29,9 @@ select count(*),sex from student group by sex;
 select count(*),sname from student group by sname ;
 
 4.1981年出生的学生名单
-select sname,year(bithday) from student where year(bithday)=1981;
+select sname,year(birthday) from student where year(birthday)=1981;
 
+select * from student where year(birthday)=1981;
 5.查询平均成绩大于60分的同学的学号和平均成绩
 select sid,avg(score) from sc group by sid having avg(score)>60;
 
