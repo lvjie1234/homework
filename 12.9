@@ -19,91 +19,126 @@
 
 二
 学生表和老师表
-1.select count(*),tname from teacher where tname like '李%';
+1.查询姓“李”的老师的个数
+select count(*),tname from teacher where tname like '李%';
 
-2.select count(*),sex from student group by sex;
+2.查询男女生人数个数
+select count(*),sex from student group by sex;
 
-3.select count(*),sname from student group by sname ;
+3.查询同名同姓学生名单，并统计同名人数
+select count(*),sname from student group by sname ;
 
-4.select sname,year(bithday) from student where year(bithday)=1981;
+4.1981年出生的学生名单
+select sname,year(bithday) from student where year(bithday)=1981;
 
-5.select sid,avg(score) from sc group by sid having avg(score)>60;
+5.查询平均成绩大于60分的同学的学号和平均成绩
+select sid,avg(score) from sc group by sid having avg(score)>60;
 
-6.select count(*),sid from sc group by sid;
+6.求选了课程的学生人数
+select count(*),sid from sc group by sid;
 
-7.select count(*),sid from sc group by sid having  count(*)>=2;
+7.查询至少选修两门课程的学生学号
+select count(*),sid from sc group by sid having  count(*)>=2;
 
-8.select cid,max(score),min(score) from sc group by cid;
+8.查询各科成绩最高和最低的分。以如下形式显示：课程ID，最高分，最低分
+select cid,max(score),min(score) from sc group by cid;
 
-9.select cid,count(*) from sc group by cid order by count(*) desc,cid;
+9.统计每门课程的学生选修人数。要求输出课程号和选修人数，查询结果按人数降序排列，若人数相同，按课程号升序排列
+select cid,count(*) from sc group by cid order by count(*) desc,cid;
 
 部门员工表
-1.select * from emp where (2018-year(hiredate))>=38;
+1.打印入职时间超过38年的员工信息
+select * from emp where (2018-year(hiredate))>=38;
 
-2.select * from emp where month(hiredate)=12;
+2.把hiredate列看做是员工的生日,求本月过生日的员工
+select * from emp where month(hiredate)=12;
 
-3.select * from emp where month(date_add(hiredate,interval 1 month))=2;
+3.把hiredate列看做是员工的生日,求下月过生日的员工
+select * from emp where month(date_add(hiredate,interval 1 month))=2;
 
-4.select * from emp where year(hiredate)=1980 and month(hiredate)>6;
+4.求1980年下半年入职的员工
+select * from emp where year(hiredate)=1980 and month(hiredate)>6;
 
-5.select ename,empno from emp where char_length(ename)=4;
+5.请用两种的方式查询所有名字长度为4的员工的员工编号,姓名
+select ename,empno from emp where char_length(ename)=4;
 	select ename,empno from emp where length(ename)=4;
-6.select min(sal),job from emp group by job;
+6.显示各种职位的最低工资显示各种职位的最低工资
+select min(sal),job from emp group by job;
 
-7.select count(*),month(hiredate),hiredate from emp group by month(hiredate);
+7.求1980年各个月入职的的员工个数
+select count(*),month(hiredate),hiredate from emp group by month(hiredate);
 
-8.select max(sal),deptno from emp group by deptno;
+8.查询每个部门的最高工资
+select max(sal),deptno from emp group by deptno;
 
-9.select min(sal),deptno,job from emp group by deptno,job;
+9.查询每个部门,每种职位的最高工资
+select min(sal),deptno,job from emp group by deptno,job;
 
-10.select sum(sal),deptno from emp group by deptno;
+10.查询各部门的总工资和平均工资
+select sum(sal),deptno from emp group by deptno;
 
-11.select avg(sal),deptno from emp where deptno=10 or deptno=20 group by deptno;
+11.查询10号部门,20号部门的平均工资（尝试用多种写法）
+select avg(sal),deptno from emp where deptno=10 or deptno=20 group by deptno;
 	select avg(sal),deptno from emp group by deptno having deptno=10 or deptno=20;
 
-12.select avg(sal),deptno from emp group by deptno having avg(sal)>2000;
+12.查询平均工资高于2000元的部门编号和平均工资
+select avg(sal),deptno from emp group by deptno having avg(sal)>2000;
 
-13. select count(*),job from emp group by job having job='manager';
+13.统计公司里经理的人数
+select count(*),job from emp group by job having job='manager';
 
 	select count(*),job from emp where job='manager' group by job;
-14.select * from emp order by sal desc limit 3;
+14.查询工资最高的3名员工信息
+select * from emp order by sal desc limit 3;
 
-15.select * from emp order by sal desc limit 6,4;
+15.查询工资由高到低第6到第10的员工信息
+select * from emp order by sal desc limit 6,4;
 三
-1.select c.cid,cname,tname,c.tid,score from sc left outer join
+1.查询李四学习的课程，考试分数，课程的授课老师
+select c.cid,cname,tname,c.tid,score from sc left outer join
 	 (course c inner join teacher  t on c.tid=t.tid) on sc.cid=c.cid where sid=1001;
 
-2.select sc.cid,score,sc.sid,c.cname,s.sname from course c left outer join 
+2.查询王五有哪些课程没选，显示这些课程名称
+select sc.cid,score,sc.sid,c.cname,s.sname from course c left outer join 
 	( sc inner join student s on s.sid=sc.sid) on c.cid=sc.cid where s.sname='王五 ';
 
-3.select s.sid,sname,count(*),sum(score) from sc inner join 
+3.查询所有同学的学号、姓名、选课数、总成绩
+select s.sid,sname,count(*),sum(score) from sc inner join 
 	student s on  s.sid=sc.sid group by s.sid;
 
 4.查询所有课程成绩都小于等于60分的同学的学号、姓名；(未完成)
 select ss.sid,ss.sname,count(*) from student ss inner join (sc inner join 
 	student s on sc.sid=s.sid) on sc.sid =ss.sid  where score<60 group by ss.sid;
 
-5.select s.sid,sname,count(*) from student s inner 
+5.查询没有学全所有课的同学的学号、姓名；
+select s.sid,sname,count(*) from student s inner 
 	join sc on s.sid=sc.sid group by sc.sid having count(*)<7;
 
-6.select cname,count(*) from course c inner join sc on sc.cid=c.cid group by sc.cid;
+6.查询每门课程选修人数，格式为课程名称，人数；
+select cname,count(*) from course c inner join sc on sc.cid=c.cid group by sc.cid;
 
-7.select sname,s.sid,count(*)  from student s inner join
+7.查询出只选修了一门课程的全部学生的学号和姓名 ；
+select sname,s.sid,count(*)  from student s inner join
 
-8.select avg(score),sc.cid from course c inner join 
+8.查询每门课程的平均成绩，结果按平均成绩升序排列，平均成绩相同时，按课程号降序排列
+select avg(score),sc.cid from course c inner join 
 	sc on sc.cid=c.cid group by sc.cid order by avg(score) asc,cid desc;
 
-9.select avg(score),s.sid,sname from student s inner join
+9.查询学生平均成绩大于80的所有学生的学号、姓名和平均成绩
+select avg(score),s.sid,sname from student s inner join
 	 sc on s.sid=sc.sid group by sc.sid having avg(score)>80;
 
 10.查询课程相同且成绩相同的的学生的学号、课程号、学生成绩 (未完成)
 select sc.cid,score,sc.sid,count(*) from sc inner join 
 	course c on c.cid=sc.cid group by sc.cid,score  having count(*)>=2;
 
-11.select sc.sid,c.cid,cname from course c inner join sc on c.cid=sc.cid group by sc.cid,sid;
+11.查询全部学生都选修的课程的课程号和课程名
+select sc.sid,c.cid,cname from course c inner join sc on c.cid=sc.cid group by sc.cid,sid;
 
-12.select count(*),sc.sid,avg(score) from  course c inner join
+12.查询两门以上不及格课程的同学的学号及其平均成绩
+select count(*),sc.sid,avg(score) from  course c inner join
   	sc on c.cid=sc.cid where score<60 group by sc.sid having count(*)>2 ;
 四
-5.select ss.sid,ss.sname,count(*),avg(score) from student ss inner join
+5.查询两门以上不及格课程的同学的学号及其平均成绩
+select ss.sid,ss.sname,count(*),avg(score) from student ss inner join
  	(sc inner join student s on sc.sid=s.sid) on sc.sid =ss.sid  where score<60 group by ss.sid having count(*)>2;
