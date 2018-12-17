@@ -1,0 +1,54 @@
+四 子查询
+1.查询所有课程成绩都小于等于60分的同学的学号、姓名
+## select st.sid,st.sname from student st inner join
+ 	(select max(score),sid from sc group by sid having max(score)<=60) a on a.sid=st.sid;##
+
+2.查询每门课程选修人数，格式为课程名称，人数
+##  select c.cname,a.co from course c inner join 
+	(select count(*) co,cid from sc group by cid) a on a.cid=c.cid;##
+
+3.查询全部学生都选修的课程的课程号和课程名
+
+##select c.cid,c.cname from course c inner join 
+	(select count(*) co,cid from sc group by cid having co=7) d on d.cid=c.cid;##
+4.查询两门以上不及格课程的同学的学号及其平均成绩
+##select sid,avg(score),count(*) from sc where score<60 group by sid  having count(*)>2 ;##
+
+5.查询2号课程成绩比1号课程成绩低的学生的学号、姓名
+
+  1)选了1.2号课学生的成绩和学号
+  select sc.sid,sc.score,sc.cid from sc inner join 
+	  (select sid,count(*),cid from sc  where cid in(1,2) group by sid having count(*)=2) a 
+  on a.sid=sc.sid where sc.cid in (1,2) order by sid; 
+  2)课程1的成绩
+  select sc2.score,sc2.sid from (select sc.sid,sc.score,sc.cid from sc inner join 
+	  (select sid,count(*),cid from sc  where cid in(1,2) group by sid having count(*)=2) a 
+  on a.sid=sc.sid where sc.cid in (1,2) order by sid) sc2 where sc2.cid=1; 
+  3)课程2 的成绩
+  select sc3.score,sc3.sid from (select sc.sid,sc.score,sc.cid from sc inner join 
+	  (select sid,count(*),cid from sc  where cid in(1,2) group by sid having count(*)=2) a 
+  on a.sid=sc.sid where sc.cid in (1,2) order by sid) sc3 where sc3.cid=2; 
+
+  4)结果
+ ## select sc5.sid from (select sc2.score,sc2.sid from (select sc.sid,sc.score,sc.cid from sc inner join 
+	  (select sid,count(*),cid from sc  where cid in(1,2) group by sid having count(*)=2) a 
+  on a.sid=sc.sid where sc.cid in (1,2) order by sid) sc2 where sc2.cid=1 ) sc5 inner join (select sc3.score,sc3.sid from (select sc.sid,sc.score,sc.cid from sc inner join 
+	  (select sid,count(*),cid from sc  where cid in(1,2) group by sid having count(*)=2) a 
+  on a.sid=sc.sid where sc.cid in (1,2) order by sid) sc3 where sc3.cid=2) sc6 on sc5.sid=sc6.sid where sc5.score>sc6.score;##
+
+6.查询学过1号课程并且也学过编号2号课程的同学的学号、姓名
+  ##select st.sname,st.sid from student st inner join (select sc.sid,sc.score,sc.cid from sc inner join 
+	  (select sid,count(*),cid from sc  where cid in(1,2) group by sid having count(*)=2) a 
+  on a.sid=sc.sid where sc.cid in (1,2) ) s on s.sid=st.sid group by sname order by sid;##
+7.查询没学过“叶平”老师课的同学的学号、姓名
+  1)查询叶平老师带的课程
+  select cid,cname from course where tid=(select tid from teacher where tname='叶平');
+
+  select sid from sc  inner join (select cid,cname from course where
+  tid=(select tid from teacher where tname='叶平')) a on sc.cid =a.cid group by sid;
+  2)查询结果是选了叶平老师的课了
+  select st.sid,st.sname from student st inner join (select sid from sc  inner join (select cid,cname from course where
+  tid=(select tid from teacher where tname='叶平')) a on sc.cid =a.cid group by sid) sa on st.sid =sa.sid;
+  3)最终结果
+ ## select st.sid,st.sname from student st inner join (select sid from sc  inner join (select cid,cname from course where
+      tid=(select tid from teacher where tname='叶平')) a on sc.cid =a.cid group by sid) sa on st.sid=sa.sid where st.sid!=sa.sid;##
